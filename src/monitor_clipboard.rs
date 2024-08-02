@@ -1,16 +1,16 @@
 use std::thread::sleep;
 use std::time::Duration;
 
-use arboard::Clipboard;
 use tokio::sync::broadcast;
+use copypasta::{ClipboardContext, ClipboardProvider};
 
 pub(crate) fn monitor_clipboard(clipboard_sender: broadcast::Sender<String>) {
-    let clipboard = Clipboard::new();
+    let clipboard = ClipboardContext::new();
     let mut current_text = String::new();
 
     match clipboard {
         Ok(mut clipboard) => loop {
-            match clipboard.get_text() {
+            match clipboard.get_contents() {
                 Ok(text) => {
                     if current_text != text {
                         current_text = text;
