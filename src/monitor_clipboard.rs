@@ -1,8 +1,8 @@
 use std::thread::sleep;
 use std::time::Duration;
 
-use tokio::sync::broadcast;
 use copypasta::{ClipboardContext, ClipboardProvider};
+use tokio::sync::broadcast;
 
 pub(crate) fn monitor_clipboard(clipboard_sender: broadcast::Sender<String>) {
     let clipboard = ClipboardContext::new();

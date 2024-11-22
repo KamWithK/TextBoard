@@ -1,15 +1,15 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-mod monitor_clipboard;
 mod comms;
+mod monitor_clipboard;
 
+use directories::ProjectDirs;
 use eframe::{egui, App, Frame, NativeOptions};
 use egui::Context;
 use std::fs::{read_to_string, write};
 use std::thread::{self};
 use tokio::runtime::Runtime;
 use tokio::sync::{broadcast, watch};
-use directories::ProjectDirs;
 
 struct TextBoard {
     identifier: String,
@@ -55,7 +55,10 @@ fn main() -> Result<(), eframe::Error> {
 
     // Create a new thread for async websocket
     thread::spawn(move || match Runtime::new() {
-        Ok(runtime) => runtime.block_on(comms::make_connections(clipboard_receiver, identifier_receiver)),
+        Ok(runtime) => runtime.block_on(comms::make_connections(
+            clipboard_receiver,
+            identifier_receiver,
+        )),
         Err(err) => eprintln!("Error creating a new runtime: {}", err),
     });
 

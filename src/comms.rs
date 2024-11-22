@@ -1,6 +1,9 @@
 use futures_util::{SinkExt, StreamExt};
 use serde_json::json;
-use tokio::{net::{TcpListener, TcpStream}, sync::{broadcast, watch}};
+use tokio::{
+    net::{TcpListener, TcpStream},
+    sync::{broadcast, watch},
+};
 
 pub(crate) async fn make_connections(
     clipboard_receiver: broadcast::Receiver<String>,
