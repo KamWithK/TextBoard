@@ -66,6 +66,6 @@ fn main() -> Result<(), eframe::Error> {
     return eframe::run_native(
         "TextBoard",
         NativeOptions::default(),
-        Box::new(|_cc| Box::new(text_board)),
+        Box::new(|_cc| Ok(Box::new(text_board))),
     );
 }
