@@ -17,9 +17,30 @@
       let
         pkgs = import nixpkgs { inherit system; };
         naersk-lib = pkgs.callPackage naersk { };
+        rpathLibs = with pkgs; [
+          libxkbcommon
+          libGL
+
+          # WINIT_UNIX_BACKEND=wayland
+          wayland
+
+          # WINIT_UNIX_BACKEND=x11
+          xorg.libXcursor
+          xorg.libXrandr
+          xorg.libXi
+          xorg.libX11
+        ];
       in
       {
-        defaultPackage = naersk-lib.buildPackage { src = ./.; };
+        defaultPackage =
+          with pkgs;
+          naersk-lib.buildPackage {
+            src = ./.;
+            postInstall = ''
+              patchelf --set-rpath ${lib.makeLibraryPath rpathLibs} $out/bin/textboard
+            '';
+            dontPatchELF = true;
+          };
         devShell =
           with pkgs;
           mkShell {
@@ -31,19 +52,6 @@
               rustPackages.clippy
             ];
             RUST_SRC_PATH = rustPlatform.rustLibSrc;
-            LD_LIBRARY_PATH = lib.makeLibraryPath [
-              libxkbcommon
-              libGL
-
-              # WINIT_UNIX_BACKEND=wayland
-              wayland
-
-              # WINIT_UNIX_BACKEND=x11
-              xorg.libXcursor
-              xorg.libXrandr
-              xorg.libXi
-              xorg.libX11
-            ];
           };
       }
     );
